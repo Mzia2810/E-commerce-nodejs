@@ -4,7 +4,8 @@
   "description": "E-Commerce WebSite",
   "main": "app.js",
   "scripts": {
-    "test": "Fashion E-Commerce Web Site"
+    "start": "node app.js",
+    "test": "echo \"No tests defined\" && exit 0"
   },
   "keywords": [
     "Fashion",
