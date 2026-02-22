@@ -1,3 +1,4 @@
+# azure-pipelines.yml
 trigger:
   branches:
     include:
@@ -8,23 +9,43 @@ pool:
 
 variables:
   NODE_VERSION: '20.x'
+  MONGO_PORT: 27017
+  MONGO_DB: mydb
 
 steps:
+# Step 1: Checkout code
 - checkout: self
 
+# Step 2: Install Node.js
 - task: NodeTool@0
   inputs:
     versionSpec: '$(NODE_VERSION)'
   displayName: 'Install Node.js'
 
+# Step 3: Start MongoDB in Docker
+- script: |
+    docker run -d --name mongodb -p $(MONGO_PORT):27017 mongo:6.0
+  displayName: 'Start MongoDB'
+
+# Step 4: Wait a few seconds for MongoDB to be ready
+- script: |
+    echo "Waiting for MongoDB to start..."
+    sleep 10
+  displayName: 'Wait for MongoDB'
+
+# Step 5: Install npm dependencies
 - script: npm install
+  workingDirectory: 'project'
   displayName: 'Install npm dependencies'
-  workingDirectory: 'project'
 
+# Step 6: Run the application
 - script: npm start
-  displayName: 'Run Application'
   workingDirectory: 'project'
+  displayName: 'Run Application'
+  env:
+    MONGO_URI: 'mongodb://localhost:$(MONGO_PORT)/$(MONGO_DB)'
 
+# Step 7: Optional: Publish project as artifact
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'project'
