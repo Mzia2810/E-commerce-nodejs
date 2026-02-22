@@ -12,13 +12,13 @@ variables:
 
 steps:
 # Step 1: Checkout code
-- task: Checkout@1
+- checkout: self
 
 # Step 2: Install Node.js
-- task: UseNode@1
+- task: NodeTool@0
   inputs:
-    version: $(NODE_VERSION)
-    checkLatest: true
+    versionSpec: '$(NODE_VERSION)'
+  displayName: 'Install Node.js'
 
 # Step 3: Install dependencies
 - script: npm install
@@ -27,7 +27,7 @@ steps:
 # Step 4: Run tests (optional, if you have any)
 - script: npm test
   displayName: 'Run tests'
-  continueOnError: true  # Remove this if you want the pipeline to fail on test errors
+  continueOnError: true  # Remove if you want to fail on test errors
 
 # Step 5: Build project (optional, if you have a build step)
 - script: npm run build
